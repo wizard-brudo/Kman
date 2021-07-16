@@ -76,15 +76,9 @@ func main() {
 			fmt.Println("Создание конфигурации сборки")
 			splitedTarFilename := strings.Split(tarFilename, ".")
 			folder := strings.Join(splitedTarFilename[0:3], ".")
-			exec.Command("sh", "-c", "cd "+folder+" && make tinyconfig").Run()
+			exec.Command("sh", "-c", "cd "+folder+" && make oldconfig").Run()
 			fmt.Println("Сборка ядра linux")
 			exec.Command("sh", "-c", "cd "+folder+" && make -j"+strconv.Itoa(runtime.NumCPU())+" bindeb-pkg").Run()
-			fmt.Println("Устоновка ядра linux")
-			getInstrumentsCmd := exec.Command("sudo", "apt", "install", "./*.deb", "-y")
-			getInstrumentsCmd.Stdin = os.Stdin
-			out, _ := getInstrumentsCmd.Output()
-			fmt.Println(string(out))
-			fmt.Println("Устоновка завершенна")
 		} else if os.Args[1] == "remove" {
 			cmd, _ := exec.Command("sh", "-c", "apt list --installed | egrep 'linux-image|linux-headers'").Output()
 			arrayKernels := strings.Split(string(cmd), "\n")
